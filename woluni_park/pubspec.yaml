@@ -21,8 +21,8 @@ flutter:
   assets:
   - assets/
   - assets/images/
-  - assets/Fonts/Bakbak_One
-  - assets/Fonts/Lato
+  - assets/Fonts/Bakbak_One/
+  - assets/Fonts/Lato/
   fonts:
     - family: Lato
       fonts:

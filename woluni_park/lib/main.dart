@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
 import 'package:woluni_park/pages/homepage.dart';
 
 void main() {
@@ -10,6 +11,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: 'Woluni Park', home: const Homepage());
+    return GetMaterialApp(
+      theme: ThemeData(fontFamily: "Lato"),
+      title: 'Woluni Park',
+      home: const Homepage(),
+    );
   }
 }

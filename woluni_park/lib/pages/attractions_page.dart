@@ -10,6 +10,31 @@ class AttractionsPage extends StatefulWidget {
 class _AttractionsPageState extends State<AttractionsPage> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+        title: Text(
+          "Attracties",
+          style: TextStyle(
+            fontSize: 40,
+            color: Color(0xffff5617),
+            fontWeight: FontWeight.bold,
+            fontFamily: "Bakbak_One",
+          ),
+        ),
+        actions: [
+          InkWell(
+            child: SizedBox(
+              width: 40,
+              height: 40,
+              child: Image.asset("assets/images/up_down.png"),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
