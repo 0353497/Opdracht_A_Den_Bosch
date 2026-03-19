@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/route_manager.dart';
+import 'package:woluni_park/pages/park_map_page.dart';
+import 'package:woluni_park/services/json_reader.dart';
 
 class AttractionsPage extends StatefulWidget {
   const AttractionsPage({super.key});
@@ -12,6 +15,8 @@ class _AttractionsPageState extends State<AttractionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: FloatingNavBar(active: 0),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         centerTitle: true,
@@ -34,6 +39,204 @@ class _AttractionsPageState extends State<AttractionsPage> {
             ),
           ),
         ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 60,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    spacing: 12,
+                    children: [
+                      PillCategoryContainer(onTap: () {}, text: 'Alles'),
+                      PillCategoryContainer(onTap: () {}, text: 'AchtBanen'),
+                      PillCategoryContainer(
+                        onTap: () {},
+                        text: 'Waterattracties',
+                      ),
+                      PillCategoryContainer(
+                        onTap: () {},
+                        text: 'Familieattracties',
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: FutureBuilder(
+                  future: JsonReader.readJson("assets/attractions.json"),
+                  builder: (context, asyncSnapshot) {
+                    if (asyncSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!asyncSnapshot.hasData) {
+                      return Center(child: Text("no data"));
+                    }
+                    return ListView.builder(
+                      itemCount: asyncSnapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        final attraction = asyncSnapshot.data![index];
+                        return AttractionDetailListTile(
+                          attraction: attraction,
+                          onTap: () {},
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AttractionDetailListTile extends StatelessWidget {
+  const AttractionDetailListTile({
+    super.key,
+    required this.attraction,
+    required this.onTap,
+  });
+
+  final VoidCallback onTap;
+  final dynamic attraction;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 100,
+      child: ListTile(
+        onTap: onTap,
+        leading: Stack(
+          children: [
+            Badge(
+              label: Icon(Icons.star),
+              isLabelVisible: false,
+              child: Transform.scale(
+                scale: 1.3,
+                child: ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(16),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Image.asset(
+                      width: 100,
+                      height: 100,
+                      "assets/images/${attraction["image"]}",
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.redAccent,
+                        child: Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        title: Text(attraction["name"]),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("${attraction["category"]} • ${attraction["speed"]} km/u"),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                color: Colors.green.withAlpha(100),
+                border: BoxBorder.all(color: Colors.green),
+              ),
+              child: Text(
+                "${attraction["wait_time"]} min",
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FloatingNavBar extends StatelessWidget {
+  const FloatingNavBar({super.key, required this.active});
+  final int active;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60,
+      width: Get.width * .35,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        gradient: LinearGradient(
+          begin: AlignmentGeometry.bottomCenter,
+          end: AlignmentGeometry.topCenter,
+          colors: [Colors.grey, Colors.white],
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          spacing: 12,
+          children: [
+            IconButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  active == 0 ? Color(0xffFF5617) : Colors.white,
+                ),
+              ),
+              onPressed: () => Get.to(() => AttractionsPage()),
+              icon: Image.asset("assets/images/menu_square.png"),
+            ),
+            IconButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStatePropertyAll(
+                  active == 1 ? Color(0xffFF5617) : Colors.white,
+                ),
+              ),
+              onPressed: () => Get.to(() => ParkMapPage()),
+              icon: Image.asset("assets/images/marker_outline.png"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PillCategoryContainer extends StatelessWidget {
+  const PillCategoryContainer({
+    super.key,
+    required this.onTap,
+    required this.text,
+    this.backgroundColor = const Color(0x33C3C3C3),
+    this.textColor = const Color(0xff303030),
+  });
+  final VoidCallback onTap;
+  final String text;
+  final Color backgroundColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: backgroundColor,
+        ),
+        child: Text(text, style: TextStyle(color: textColor)),
       ),
     );
   }
