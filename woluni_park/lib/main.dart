@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
+import 'package:get/get.dart';
 import 'package:woluni_park/pages/homepage.dart';
+import 'package:woluni_park/providers/favorite_provider.dart';
 
 void main() {
   runApp(const MyApp());
+  Get.put<FavoriteProvider>(FavoriteProvider());
 }
 
 class MyApp extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:woluni_park/providers/favorite_provider.dart';
 import 'package:woluni_park/services/time_service.dart';
 
 class AttractionsDetailsPage extends StatefulWidget {
@@ -10,8 +11,18 @@ class AttractionsDetailsPage extends StatefulWidget {
 }
 
 class _AttractionsDetailsPageState extends State<AttractionsDetailsPage> {
+  final provider = Get.find<FavoriteProvider>();
+  bool isFavorite = false;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    isFavorite = provider.favoriteAttractionIds.contains(
+      widget.attraction["id"],
+    );
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,8 +47,24 @@ class _AttractionsDetailsPageState extends State<AttractionsDetailsPage> {
                         Colors.grey.withAlpha(120),
                       ),
                     ),
-                    onPressed: () {},
-                    icon: Icon(Icons.star_outline, color: Colors.white),
+                    onPressed: () {
+                      if (provider.favoriteAttractionIds.contains(
+                        widget.attraction["id"],
+                      )) {
+                        provider.favoriteAttractionIds.remove(
+                          widget.attraction["id"],
+                        );
+                      } else {
+                        provider.favoriteAttractionIds.add(
+                          widget.attraction["id"],
+                        );
+                      }
+                      setState(() {});
+                    },
+                    icon: Icon(
+                      isFavorite ? Icons.star : Icons.star_outline,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

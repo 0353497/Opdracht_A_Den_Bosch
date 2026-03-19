@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:get/route_manager.dart';
 import 'package:woluni_park/components/floating_nav_bar.dart';
 import 'package:woluni_park/pages/attractions_details_page.dart';
+import 'package:woluni_park/providers/favorite_provider.dart';
 import 'package:woluni_park/services/json_reader.dart';
 import 'package:woluni_park/services/time_service.dart';
 
@@ -199,15 +201,19 @@ class AttractionDetailListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Get.find<FavoriteProvider>();
+    bool isFavorite = provider.favoriteAttractionIds.contains(attraction["id"]);
     return SizedBox(
+      key: Key("${attraction["id"]}+$isFavorite"),
       height: 100,
       child: ListTile(
         onTap: onTap,
         leading: Stack(
           children: [
             Badge(
-              label: Icon(Icons.star),
-              isLabelVisible: false,
+              backgroundColor: Color(0xffff5617),
+              label: Icon(Icons.star, color: Colors.white),
+              isLabelVisible: isFavorite,
               child: Transform.scale(
                 scale: 1.3,
                 child: ClipRRect(
