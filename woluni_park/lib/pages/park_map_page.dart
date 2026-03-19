@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:woluni_park/components/floating_nav_bar.dart';
-import 'package:woluni_park/pages/attractions_page.dart';
 
 class ParkMapPage extends StatefulWidget {
   const ParkMapPage({super.key});

@@ -33,7 +33,10 @@ class FloatingNavBar extends StatelessWidget {
                 ),
               ),
               onPressed: () => Get.to(() => AttractionsPage()),
-              icon: Image.asset("assets/images/menu_square.png"),
+              icon: Image.asset(
+                "assets/images/menu_square.png",
+                color: active == 0 ? Color(0xffFF5617) : Color(0xff030303),
+              ),
             ),
             IconButton(
               style: ButtonStyle(
@@ -42,7 +45,9 @@ class FloatingNavBar extends StatelessWidget {
                 ),
               ),
               onPressed: () => Get.to(() => ParkMapPage()),
-              icon: Image.asset("assets/images/marker_outline.png"),
+              icon: active == 1
+                  ? Icon(Icons.location_on, color: Colors.white)
+                  : Image.asset("assets/images/marker_outline.png"),
             ),
           ],
         ),

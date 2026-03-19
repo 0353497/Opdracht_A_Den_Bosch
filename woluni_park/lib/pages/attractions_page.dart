@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/route_manager.dart';
 import 'package:woluni_park/components/floating_nav_bar.dart';
 import 'package:woluni_park/pages/attractions_details_page.dart';
-import 'package:woluni_park/pages/park_map_page.dart';
 import 'package:woluni_park/services/json_reader.dart';
 
 class AttractionsPage extends StatefulWidget {
@@ -13,6 +12,17 @@ class AttractionsPage extends StatefulWidget {
 }
 
 class _AttractionsPageState extends State<AttractionsPage> {
+  int selectedCategory = 0;
+  late Future<List> allAttractions;
+  List allAttractionsValue = [];
+  List filteredAttractions = [];
+  @override
+  void initState() {
+    super.initState();
+    allAttractions = JsonReader.readJson("assets/attractions.json");
+    init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,15 +64,25 @@ class _AttractionsPageState extends State<AttractionsPage> {
                   child: Row(
                     spacing: 12,
                     children: [
-                      PillCategoryContainer(onTap: () {}, text: 'Alles'),
-                      PillCategoryContainer(onTap: () {}, text: 'AchtBanen'),
                       PillCategoryContainer(
-                        onTap: () {},
-                        text: 'Waterattracties',
+                        onTap: () => applyCategory(0),
+                        text: 'Alles',
+                        isSelectedCategory: selectedCategory == 0,
                       ),
                       PillCategoryContainer(
-                        onTap: () {},
+                        onTap: () => applyCategory(1),
+                        text: 'AchtBanen',
+                        isSelectedCategory: selectedCategory == 1,
+                      ),
+                      PillCategoryContainer(
+                        onTap: () => applyCategory(2),
+                        text: 'Waterattracties',
+                        isSelectedCategory: selectedCategory == 2,
+                      ),
+                      PillCategoryContainer(
+                        onTap: () => applyCategory(3),
                         text: 'Familieattracties',
+                        isSelectedCategory: selectedCategory == 3,
                       ),
                     ],
                   ),
@@ -70,7 +90,7 @@ class _AttractionsPageState extends State<AttractionsPage> {
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: JsonReader.readJson("assets/attractions.json"),
+                  future: allAttractions,
                   builder: (context, asyncSnapshot) {
                     if (asyncSnapshot.connectionState ==
                         ConnectionState.waiting) {
@@ -80,9 +100,9 @@ class _AttractionsPageState extends State<AttractionsPage> {
                       return Center(child: Text("no data"));
                     }
                     return ListView.builder(
-                      itemCount: asyncSnapshot.data!.length,
+                      itemCount: filteredAttractions.length,
                       itemBuilder: (context, index) {
-                        final attraction = asyncSnapshot.data![index];
+                        final attraction = filteredAttractions[index];
                         return AttractionDetailListTile(
                           attraction: attraction,
                           onTap: () => Get.to(
@@ -100,6 +120,32 @@ class _AttractionsPageState extends State<AttractionsPage> {
         ),
       ),
     );
+  }
+
+  void init() async {
+    filteredAttractions = await allAttractions;
+    allAttractionsValue = await JsonReader.readJson("assets/attractions.json");
+  }
+
+  Future<void> applyCategory(int categoryIndex) async {
+    selectedCategory = categoryIndex;
+    filteredAttractions = allAttractionsValue;
+    if (categoryIndex == 1) {
+      filteredAttractions = allAttractionsValue
+          .where((value) => value["category"] == "rollercoaster")
+          .toList();
+    }
+    if (categoryIndex == 2) {
+      filteredAttractions = allAttractionsValue
+          .where((value) => value["category"] == "water")
+          .toList();
+    }
+    if (categoryIndex == 3) {
+      filteredAttractions = allAttractionsValue
+          .where((value) => value["category"] == "family")
+          .toList();
+    }
+    setState(() {});
   }
 }
 
@@ -175,13 +221,11 @@ class PillCategoryContainer extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.text,
-    this.backgroundColor = const Color(0x33C3C3C3),
-    this.textColor = const Color(0xff303030),
+    required this.isSelectedCategory,
   });
+  final bool isSelectedCategory;
   final VoidCallback onTap;
   final String text;
-  final Color backgroundColor;
-  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -191,9 +235,14 @@ class PillCategoryContainer extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: backgroundColor,
+          color: isSelectedCategory ? Colors.white : const Color(0x33C3C3C3),
         ),
-        child: Text(text, style: TextStyle(color: textColor)),
+        child: Text(
+          text,
+          style: TextStyle(
+            color: isSelectedCategory ? Color(0xffff5617) : Color(0xff303030),
+          ),
+        ),
       ),
     );
   }
