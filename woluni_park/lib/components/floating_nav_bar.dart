@@ -35,7 +35,7 @@ class FloatingNavBar extends StatelessWidget {
               onPressed: () => Get.to(() => AttractionsPage()),
               icon: Image.asset(
                 "assets/images/menu_square.png",
-                color: active == 0 ? Color(0xffFF5617) : Color(0xff030303),
+                color: active == 0 ? Colors.white : Color(0xff030303),
               ),
             ),
             IconButton(

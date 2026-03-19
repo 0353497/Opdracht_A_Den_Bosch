@@ -3,6 +3,7 @@ import 'package:get/route_manager.dart';
 import 'package:woluni_park/components/floating_nav_bar.dart';
 import 'package:woluni_park/pages/attractions_details_page.dart';
 import 'package:woluni_park/services/json_reader.dart';
+import 'package:woluni_park/services/time_service.dart';
 
 class AttractionsPage extends StatefulWidget {
   const AttractionsPage({super.key});
@@ -201,12 +202,22 @@ class AttractionDetailListTile extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                color: Colors.green.withAlpha(100),
-                border: BoxBorder.all(color: Colors.green),
+                color: TimeService.getColorBasedOnDelayAlpha(
+                  int.parse(attraction["wait_time"]),
+                ),
+                border: BoxBorder.all(
+                  color: TimeService.getColorBasedOnDelay(
+                    int.parse(attraction["wait_time"]),
+                  ),
+                ),
               ),
               child: Text(
                 "${attraction["wait_time"]} min",
-                style: TextStyle(color: Colors.green),
+                style: TextStyle(
+                  color: TimeService.getColorBasedOnDelay(
+                    int.parse(attraction["wait_time"]),
+                  ),
+                ),
               ),
             ),
           ],

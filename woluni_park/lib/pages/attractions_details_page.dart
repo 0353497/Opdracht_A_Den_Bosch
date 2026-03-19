@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:woluni_park/services/time_service.dart';
 
 class AttractionsDetailsPage extends StatefulWidget {
   const AttractionsDetailsPage({super.key, this.attraction});
@@ -68,12 +69,22 @@ class _AttractionsDetailsPageState extends State<AttractionsDetailsPage> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          color: Colors.green.withAlpha(100),
-                          border: BoxBorder.all(color: Colors.green),
+                          color: TimeService.getColorBasedOnDelayAlpha(
+                            int.parse(widget.attraction["wait_time"]),
+                          ),
+                          border: BoxBorder.all(
+                            color: TimeService.getColorBasedOnDelay(
+                              int.parse(widget.attraction["wait_time"]),
+                            ),
+                          ),
                         ),
                         child: Text(
                           "${widget.attraction["wait_time"]} min wachttijd",
-                          style: TextStyle(color: Colors.green),
+                          style: TextStyle(
+                            color: TimeService.getColorBasedOnDelay(
+                              int.parse(widget.attraction["wait_time"]),
+                            ),
+                          ),
                         ),
                       ),
                     ],
