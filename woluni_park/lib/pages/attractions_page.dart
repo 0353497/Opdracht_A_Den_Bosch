@@ -14,6 +14,7 @@ class AttractionsPage extends StatefulWidget {
 
 class _AttractionsPageState extends State<AttractionsPage> {
   int selectedCategory = 0;
+  int selectedSort = 1;
   late Future<List> allAttractions;
   List allAttractionsValue = [];
   List filteredAttractions = [];
@@ -44,12 +45,26 @@ class _AttractionsPageState extends State<AttractionsPage> {
           ),
         ),
         actions: [
-          InkWell(
-            child: SizedBox(
-              width: 40,
-              height: 40,
-              child: Image.asset("assets/images/up_down.png"),
+          DropdownButton<int>(
+            icon: InkWell(
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: Image.asset("assets/images/up_down.png"),
+              ),
             ),
+            items: [
+              DropdownMenuItem(value: 0, child: Text("Alfabetisch")),
+              DropdownMenuItem(value: 1, child: Text("Wachttijd")),
+              DropdownMenuItem(value: 2, child: Text("Snelheid")),
+            ],
+            onChanged: (value) {
+              if (value == null) return;
+              _applySort(value);
+              setState(() {
+                selectedSort = value;
+              });
+            },
           ),
         ],
       ),
@@ -146,6 +161,28 @@ class _AttractionsPageState extends State<AttractionsPage> {
           .where((value) => value["category"] == "family")
           .toList();
     }
+    setState(() {});
+  }
+
+  void _applySort(int value) {
+    selectedSort = value;
+    if (selectedSort == 0) {
+      filteredAttractions.sort(
+        (a, b) => a["name"].toString().compareTo(b["name"].toString()),
+      );
+    }
+    if (selectedSort == 1) {
+      filteredAttractions.sort(
+        (a, b) =>
+            a["wait_time"].toString().compareTo(b["wait_time"].toString()),
+      );
+    }
+    if (selectedSort == 2) {
+      filteredAttractions.sort(
+        (a, b) => int.parse(a["speed"]).compareTo(int.parse(b["speed"])),
+      );
+    }
+
     setState(() {});
   }
 }
